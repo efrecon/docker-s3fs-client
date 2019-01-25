@@ -72,3 +72,15 @@ Note that both of these commands ensure that the remote bucket is unmounted from
 the mountpoint at termination, so you should really pick one or the other to
 allow for proper operation. If the mountpoint was not unmounted, your mount
 system will be unstable as it will contain an unknown entry.
+
+## Versions and Tags
+
+The docker [image] has [tags] that automatically match the list of official
+[versions] of [s3fs]. This is achieved through using the github API to discover
+the list of tags starting with `v` and building a separate image for each of
+them. The image itself builds upon [alpine].
+
+  [image]: https://cloud.docker.com/repository/docker/efrecon/s3fs
+  [tags]: https://cloud.docker.com/repository/docker/efrecon/s3fs/tags
+  [versions]: https://github.com/s3fs-fuse/s3fs-fuse/tags
+  [alpine]: https://hub.docker.com/_/alpine
