@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.8
 
 ARG S3FS_VERSION=v1.84
 
