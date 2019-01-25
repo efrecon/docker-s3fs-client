@@ -40,7 +40,7 @@ fi
 
 # Deal with ownership
 if [ $OWNER -gt 0 ]; then
-    useradd s3fs -u $OWNER -N -G users
+    adduser -u $OWNER -HD -G users s3fs
     chown s3fs $AWS_S3_MOUNT
     chown s3fs ${AWS_S3_AUTHFILE}
 fi
