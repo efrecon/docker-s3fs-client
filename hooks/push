@@ -1,0 +1,14 @@
+#!/bin/bash
+
+versions=$(curl -qsL https://api.github.com/repos/s3fs-fuse/s3fs-fuse/tags | grep "\"name\":" | sed "s/,$//g" | sed "s/^\s*\"name\":\s*//g" | sed "s/\"//g")
+
+
+IMG=$(basename $DOCKER_REPO)
+for version in ${versions}; do
+    official=$(echo "$version" | grep -E "^v[0-9]+(.[0-9]+)*")
+    if [ -n "$official" ]; then
+        tag=$(echo "$official" | sed "s/^v//g")
+        echo "======================= Building ${IMG}:$tag"
+        docker push ${DOCKER_REPO}:$tag
+    fi
+done
