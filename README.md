@@ -7,7 +7,6 @@ directory in a way that makes its content available to processes (and other
 containers) on the host.
 
   [s3fs]: https://github.com/s3fs-fuse/s3fs-fuse
-  [configuration]: https://man.cx/davfs2.conf(5)
 
 ## Example
 
@@ -25,7 +24,7 @@ docker run -it --rm \
     --env "AWS_S3_ACCESS_KEY_ID=<accessKey>" \
     --env "AWS_S3_SECRET_ACCESS_KEY=<secretKey>" \
     -v /mnt/tmp:/mnt/bucket:rshared \
-    efrecon/s3fs-client
+    efrecon/s3fs
 ```
 
 The `--device`, `--cap-add` and `--security-opt` options and their values are to
