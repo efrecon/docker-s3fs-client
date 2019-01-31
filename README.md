@@ -11,6 +11,13 @@ automatically unmount the remote bucket on container termination.
   [s3fs]: https://github.com/s3fs-fuse/s3fs-fuse
   [volume]: https://docs.docker.com/storage/
 
+The image [tags] follow the versions from the [s3fs] implementation. New
+versions of [s3fs] will automatically be picked up when [rebuilding]. [s3fs] is
+compiled from the tagged git versions from the main repository.
+
+  [tags]: https://cloud.docker.com/repository/docker/efrecon/s3fs/tags
+  [rebuilding]: ./hooks/build
+
 ## Example
 
 Provided the existence of a directory called `/mnt/tmp` on the host, the
@@ -42,11 +49,13 @@ parametrise the container:
 
 * `AWS_S3_BUCKET` should be the name of the bucket, this is mandatory.
 * `AWS_S3_AUTHFILE` is the path to an authorisation file compatible with the
-  format specified by [s3fs]. This can be empty, in which case data will be taken from the other authorisation-related environment variables.
+  format specified by [s3fs]. This can be empty, in which case data will be
+  taken from the other authorisation-related environment variables.
 * `AWS_S3_ACCESS_KEY_ID` is the access key to the S3 bucket, this is only used
   whenever `AWS_S3_AUTHFILE` is empty.
 * `AWS_S3_SECRET_ACCESS_KEY` is the secret access key to the S3 bucket, this is
-  only used whenever `AWS_S3_AUTHFILE` is empty. Note however that the variable `AWS_S3_SECRET_ACCESS_KEY_FILE` has precedence over this one.
+  only used whenever `AWS_S3_AUTHFILE` is empty. Note however that the variable
+  `AWS_S3_SECRET_ACCESS_KEY_FILE` has precedence over this one.
 * `AWS_S3_SECRET_ACCESS_KEY_FILE` points instead to a file that will contain the
   secret access key to the S3 bucket. When this is present, the password will be
   taken from the file instead of from the `AWS_S3_SECRET_ACCESS_KEY` variable.
