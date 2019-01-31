@@ -1,12 +1,15 @@
 # Dockerised s3fs Client
 
-This container facilitates mounting of remote S3 buckets resources into a
-container. Mounting is implemented using [s3fs]. Used with the proper creation
-options, you should be able to bind-mount back the remote bucket onto a host
-directory in a way that makes its content available to processes (and other
-containers) on the host.
+This Docker image facilitates mounting of remote S3 buckets resources into
+containers. Mounting is performed through the fuse [s3fs] implementation. The
+image basically implements a docker [volume] on the cheap: Used with the proper
+creation options (see below) , you should be able to bind-mount back the remote
+bucket onto a host directory. This directory will make the content of the bucket
+available to processes, but also all other containers on the host. The image
+automatically unmount the remote bucket on container termination.
 
   [s3fs]: https://github.com/s3fs-fuse/s3fs-fuse
+  [volume]: https://docs.docker.com/storage/
 
 ## Example
 
