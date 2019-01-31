@@ -73,6 +73,13 @@ the mountpoint at termination, so you should really pick one or the other to
 allow for proper operation. If the mountpoint was not unmounted, your mount
 system will be unstable as it will contain an unknown entry.
 
+Automatic unmounting is achieved through a combination of a `trap` in the
+command being executed and [tini]. [tini] is made available directly in this
+image to make it possible to run in [Swarm] environments.
+
+  [tini]: https://github.com/krallin/tini
+  [Swarm]: https://docs.docker.com/engine/swarm/
+
 ## Versions and Tags
 
 The docker [image] has [tags] that automatically match the list of official

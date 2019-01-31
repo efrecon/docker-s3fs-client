@@ -23,7 +23,7 @@ ENV AWS_S3_MOUNT=/mnt/bucket
 ENV S3FS_DEBUG=0
 ENV S3FS_ARGS=
 
-RUN apk --no-cache add ca-certificates fuse build-base git automake autoconf alpine-sdk libxml2 libxml2-dev libressl-dev fuse-dev libcurl curl-dev && \
+RUN apk --no-cache add ca-certificates fuse build-base git automake autoconf alpine-sdk libxml2 libxml2-dev libressl-dev fuse-dev libcurl curl-dev tini && \
     git clone https://github.com/s3fs-fuse/s3fs-fuse.git && \
     cd s3fs-fuse && \
     git checkout tags/${S3FS_VERSION} && \
@@ -45,5 +45,5 @@ VOLUME [ "/mnt/bucket" ]
 # to then have a command that will keep listing the files under the main share.
 # Listing the files will keep the share active and avoid that the remote server
 # closes the connection.
-ENTRYPOINT [ "docker-entrypoint.sh" ]
+ENTRYPOINT [ "tini", "-g", "--", "docker-entrypoint.sh" ]
 CMD [ "ls.sh" ]
