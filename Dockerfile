@@ -38,7 +38,7 @@ RUN s3fs --version
 
 COPY *.sh /usr/local/bin/
 
-# Following should match the WEBDRIVE_MOUNT environment variable.
+# Following should match the AWS_S3_MOUNT environment variable.
 VOLUME [ "/mnt/bucket" ]
 
 # The default is to perform all system-level mounting as part of the entrypoint
