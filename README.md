@@ -33,7 +33,9 @@ docker run -it --rm \
     --env "AWS_S3_BUCKET=<bucketName>" \
     --env "AWS_S3_ACCESS_KEY_ID=<accessKey>" \
     --env "AWS_S3_SECRET_ACCESS_KEY=<secretKey>" \
-    -v /mnt/tmp:/mnt/bucket:rshared \
+    --env UID=$(id -u) \
+    --env GID=$(id -g) \
+    -v /mnt/tmp:/opt/s3fs/bucket:rshared \
     efrecon/s3fs
 ```
 
@@ -65,9 +67,10 @@ parametrise the container:
 * `AWS_S3_URL` is the URL to the Amazon service. This can be used to mount
   external services that implement a compatible API.
 * `AWS_S3_MOUNT` is the location within the container where to mounte the
-  WebDAV resource. This defaults to `/mnt/webdrive` and is not really meant to
+  WebDAV resource. This defaults to `/opt/s3fs/bucket` and is not really meant to
   be changed.
-* `OWNER` is the user ID for the owner of the share inside the container.
+* `UID` is the user ID for the owner of the share inside the container.
+* `GID` is the group ID for the owner of the share inside the container.
 * `S3FS_DEBUG` can be set to `1` to get some debugging information from [s3fs].
 * `S3FS_ARGS` can contain some additional options to passed to [s3fs].
 
