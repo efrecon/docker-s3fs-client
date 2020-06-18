@@ -1,7 +1,7 @@
 #! /usr/bin/env sh
 
 # Where are we going to mount the remote bucket resource in our container.
-DEST=${AWS_S3_MOUNT:-/mnt/bucket}
+DEST=${AWS_S3_MOUNT:-/opt/s3fs/bucket}
 
 # Check variables and defaults
 if [ -z "${AWS_S3_ACCESS_KEY_ID}" -a -z "${AWS_S3_SECRET_ACCESS_KEY}" -a -z "${AWS_S3_SECRET_ACCESS_KEY_FILE}" -a -z "${AWS_S3_AUTHFILE}" ]; then
@@ -22,7 +22,7 @@ fi
 
 # Create or use authorisation file
 if [ -z "${AWS_S3_AUTHFILE}" ]; then
-    AWS_S3_AUTHFILE=/etc/passwd-s3fs
+    AWS_S3_AUTHFILE=/opt/s3fs/passwd-s3fs
     echo "${AWS_S3_ACCESS_KEY_ID}:${AWS_S3_SECRET_ACCESS_KEY}" > ${AWS_S3_AUTHFILE}
     chmod 600 ${AWS_S3_AUTHFILE}
 fi
@@ -38,11 +38,18 @@ if [ ! -d $DEST ]; then
     mkdir -p $DEST
 fi
 
-# Deal with ownership
-if [ $OWNER -gt 0 ]; then
-    adduser -u $OWNER -HD -G users s3fs
-    chown s3fs $AWS_S3_MOUNT
-    chown s3fs ${AWS_S3_AUTHFILE}
+# Add a group
+if [ $GID -gt 0 ]; then
+    addgroup -g $GID -S $GID
+fi
+
+# Add a user
+if [ $UID -gt 0 ]; then
+    adduser -u $UID -D -G $GID $UID
+    RUN_AS=$UID
+    chown $UID $AWS_S3_MOUNT
+    chown $UID ${AWS_S3_AUTHFILE}
+    chown $UID /opt/s3fs
 fi
 
 # Debug options
@@ -54,7 +61,14 @@ fi
 # Mount and verify that something is present. davfs2 always creates a lost+found
 # sub-directory, so we can use the presence of some file/dir as a marker to
 # detect that mounting was a success. Execute the command on success.
-s3fs $DEBUG_OPTS ${S3FS_ARGS} -o passwd_file=${AWS_S3_AUTHFILE} -o url=${AWS_S3_URL} -o uid=$OWNER ${AWS_S3_BUCKET} ${AWS_S3_MOUNT}
+
+su - $RUN_AS -c "s3fs $DEBUG_OPTS ${S3FS_ARGS} \
+    -o passwd_file=${AWS_S3_AUTHFILE} \
+    -o url=${AWS_S3_URL} \
+    -o uid=$UID \
+    -o gid=$GID \
+    ${AWS_S3_BUCKET} ${AWS_S3_MOUNT}"
+
 mounted=$(mount | grep s3fs | grep "${AWS_S3_MOUNT}")
 if [ -n "${mounted}" ]; then
     echo "Mounted bucket ${AWS_S3_BUCKET} onto ${AWS_S3_MOUNT}"

@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  s3fs:
+    container_name: s3fs
+    image: s3fs
+    build:
+      context: .
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - 'apparmor:unconfined'
+    devices:
+      - /dev/fuse
+    volumes:
+      - './bb:/opt/s3fs/bucket:rshared'
+    environment:
+      AWS_S3_BUCKET: '${AWS_S3_BUCKET}'
+      AWS_S3_ACCESS_KEY_ID: '${AWS_S3_ACCESS_KEY_ID}'
+      AWS_S3_SECRET_ACCESS_KEY: '${AWS_S3_SECRET_ACCESS_KEY}'
+      AWS_S3_AUTHFILE: '${AWS_S3_AUTHFILE}'
+      AWS_S3_SECRET_ACCESS_KEY_FILE: '${AWS_S3_SECRET_ACCESS_KEY_FILE}'
+      AWS_S3_URL: '${AWS_S3_URL}'
+      AWS_S3_MOUNT: '/opt/s3fs/bucket'
+      S3FS_ARGS: '-o nomultipart -o use_cache=/tmp'
+      S3FS_DEBUG: 0
+      UID: 1000
+      GID: 1000
