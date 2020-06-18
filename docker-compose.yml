@@ -13,7 +13,7 @@ services:
     devices:
       - /dev/fuse
     volumes:
-      - './bb:/opt/s3fs/bucket:rshared'
+      - './bucket:/opt/s3fs/bucket:rshared'
     environment:
       AWS_S3_BUCKET: '${AWS_S3_BUCKET}'
       AWS_S3_ACCESS_KEY_ID: '${AWS_S3_ACCESS_KEY_ID}'
@@ -22,7 +22,7 @@ services:
       AWS_S3_SECRET_ACCESS_KEY_FILE: '${AWS_S3_SECRET_ACCESS_KEY_FILE}'
       AWS_S3_URL: '${AWS_S3_URL}'
       AWS_S3_MOUNT: '/opt/s3fs/bucket'
-      S3FS_ARGS: '-o nomultipart -o use_cache=/tmp'
+      S3FS_ARGS: '-o use_cache=/tmp'
       S3FS_DEBUG: 0
       UID: 1000
       GID: 1000
