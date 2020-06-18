@@ -2,9 +2,7 @@ version: '3.8'
 services:
   s3fs:
     container_name: s3fs
-    image: s3fs
-    build:
-      context: .
+    image: efrecon/s3fs:1.86
     restart: unless-stopped
     cap_add:
       - SYS_ADMIN
@@ -22,7 +20,7 @@ services:
       AWS_S3_SECRET_ACCESS_KEY_FILE: '${AWS_S3_SECRET_ACCESS_KEY_FILE}'
       AWS_S3_URL: '${AWS_S3_URL}'
       AWS_S3_MOUNT: '/opt/s3fs/bucket'
-      S3FS_ARGS: '-o use_cache=/tmp'
+      S3FS_ARGS: ''
       S3FS_DEBUG: 0
       UID: 1000
       GID: 1000
