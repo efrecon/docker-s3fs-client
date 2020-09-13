@@ -1,0 +1,30 @@
+
+#!/usr/bin/env sh
+
+# shellcheck disable=SC1090
+. "$(dirname "$0")/reg-tags/image_tags.sh"
+
+# github repo to get list of tags from
+BASEREPO=s3fs-fuse/s3fs-fuse
+
+versions=$( curl -qsL https://api.github.com/repos/${BASEREPO}/tags |
+            grep "\"name\":" |
+            sed "s/,$//g" |
+            sed "s/^\s*\"name\":\s*//g" |
+            sed "s/\"//g")
+
+dtags=$(img_tags "$DOCKER_REPO")
+for version in ${versions}; do
+    official=$(echo "$version" | grep -E "^v[0-9]+(.[0-9]+)*")
+    if [ -n "$official" ]; then
+        tag=$(echo "$official" | sed "s/^v//g")
+        if printf %s\\n "$dtags" | grep -q "$tag" ; then
+            echo "======================= Skipping ${DOCKER_REPO}:$tag"
+        elif [ "$tag" = "1.87" ]; then
+            echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail"
+        else
+            echo "======================= Building ${DOCKER_REPO}:$tag"
+            docker build --build-arg S3FS_VERSION=$version -t ${DOCKER_REPO}:$tag .
+        fi
+    fi
+done
