@@ -60,6 +60,9 @@ RUN mkdir /opt/s3fs && \
       tini && \
     s3fs --version
 
+# allow access to volume by different user to enable UIDs other than root when using volumes
+RUN echo user_allow_other >> /etc/fuse.conf
+
 COPY *.sh /usr/local/bin/
 
 WORKDIR /opt/s3fs
@@ -72,4 +75,4 @@ VOLUME [ "/opt/s3fs/bucket" ]
 # Listing the files will keep the share active and avoid that the remote server
 # closes the connection.
 ENTRYPOINT [ "tini", "-g", "--", "docker-entrypoint.sh" ]
-CMD [ "ls.sh" ]
+CMD [ "empty.sh" ]
