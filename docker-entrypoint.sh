@@ -38,14 +38,17 @@ if [ ! -d $DEST ]; then
     mkdir -p $DEST
 fi
 
+GROUP_NAME=$(getent group "${GID}" | cut -d":" -f1)
+
 # Add a group
-if [ $GID -gt 0 ]; then
+if [ $GID -gt 0 -a -z "${GROUP_NAME}" ]; then
     addgroup -g $GID -S $GID
+    GROUP_NAME=$GID
 fi
 
 # Add a user
 if [ $UID -gt 0 ]; then
-    adduser -u $UID -D -G $GID $UID
+    adduser -u $UID -D -G $GROUP_NAME $UID
     RUN_AS=$UID
     chown $UID $AWS_S3_MOUNT
     chown $UID ${AWS_S3_AUTHFILE}
