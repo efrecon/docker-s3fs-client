@@ -61,11 +61,16 @@ if [ $S3FS_DEBUG = "1" ]; then
     DEBUG_OPTS="-d -d"
 fi
 
+# Additional S3FS options
+if [ -n "$S3FS_ARGS" ]; then
+    S3FS_ARGS="-o $S3FS_ARGS"
+fi
+
 # Mount and verify that something is present. davfs2 always creates a lost+found
 # sub-directory, so we can use the presence of some file/dir as a marker to
 # detect that mounting was a success. Execute the command on success.
 
-su - $RUN_AS -c "s3fs $DEBUG_OPTS -o ${S3FS_ARGS} \
+su - $RUN_AS -c "s3fs $DEBUG_OPTS ${S3FS_ARGS} \
     -o passwd_file=${AWS_S3_AUTHFILE} \
     -o url=${AWS_S3_URL} \
     -o uid=$UID \
