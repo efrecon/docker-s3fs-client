@@ -74,6 +74,7 @@ parametrise the container:
 * `S3FS_DEBUG` can be set to `1` to get some debugging information from [s3fs].
 * `S3FS_ARGS` can contain some additional options to be blindly passed to
   [s3fs].
+  * options are supposed to be given comma-separated, e.g. "use_path_request_style,allow_other,default_acl=public-read"
 
   [secrets]: https://docs.docker.com/engine/swarm/secrets/
 
