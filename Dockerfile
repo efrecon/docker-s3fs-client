@@ -1,6 +1,6 @@
 FROM alpine AS build
 
-ARG S3FS_VERSION=v1.86
+ARG S3FS_VERSION=v1.89
 
 RUN apk --no-cache add \
     ca-certificates \
@@ -12,6 +12,7 @@ RUN apk --no-cache add \
     autoconf \
     libxml2-dev \
     libressl-dev \
+    mailcap \
     fuse-dev \
     curl-dev && \
   git clone https://github.com/s3fs-fuse/s3fs-fuse.git && \
@@ -52,6 +53,7 @@ ENV S3FS_ARGS=
 RUN mkdir /opt/s3fs && \
     apk --no-cache add \
       ca-certificates \
+      mailcap \
       fuse \
       libxml2 \
       libcurl \
