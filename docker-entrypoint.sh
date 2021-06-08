@@ -50,9 +50,9 @@ fi
 if [ $UID -gt 0 ]; then
     adduser -u $UID -D -G $GROUP_NAME $UID
     RUN_AS=$UID
-    chown $UID $AWS_S3_MOUNT
-    chown $UID ${AWS_S3_AUTHFILE}
-    chown $UID /opt/s3fs
+    chown $UID:$GID $AWS_S3_MOUNT
+    chown $UID:$GID ${AWS_S3_AUTHFILE}
+    chown $UID:$GID /opt/s3fs
 fi
 
 # Debug options
