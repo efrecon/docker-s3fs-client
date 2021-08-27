@@ -17,14 +17,14 @@ versions=$( curl -qsL https://api.github.com/repos/${BASEREPO}/tags |
             sed "s/^\s*\"name\":\s*//g" |
             sed "s/\"//g")
 
-dtags=$(img_tags "$DOCKER_REPO")
+# Login at the Docker hub to be able to access info about the image.
+token=$(img_auth "$DOCKER_REPO")
+
 for version in ${versions}; do
     official=$(echo "$version" | grep -E "^v[0-9]+(.[0-9]+)*")
     if [ -n "$official" ]; then
         tag=$(echo "$official" | sed "s/^v//g")
-        if printf %s\\n "$dtags" | grep -q "$tag" ; then
-            echo "======================= Skipping ${DOCKER_REPO}:$tag"
-        elif [ "$tag" = "1.87" ]; then
+        if [ "$tag" = "1.87" ]; then
             echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail"
         else
             # Get the revision out of the org.opencontainers.image.revision label, this
