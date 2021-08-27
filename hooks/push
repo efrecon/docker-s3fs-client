@@ -10,7 +10,8 @@ versions=$( curl -qsL https://api.github.com/repos/${BASEREPO}/tags |
             grep "\"name\":" |
             sed "s/,$//g" |
             sed "s/^\s*\"name\":\s*//g" |
-            sed "s/\"//g")
+            sed "s/\"//g" |
+            sort)
 
 for version in ${versions}; do
     official=$(echo "$version" | grep -E "^v[0-9]+(.[0-9]+)*")
