@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 . "$(dirname "$0")/reg-tags/image_tags.sh"
 
 # github repo to get list of tags from
@@ -23,7 +23,7 @@ for version in ${versions}; do
             echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail"
         else
             echo "======================= Building ${DOCKER_REPO}:$tag"
-            docker build --build-arg S3FS_VERSION=$version -t ${DOCKER_REPO}:$tag .
+            docker build --build-arg S3FS_VERSION="$version" -t "${DOCKER_REPO}:$tag" .
         fi
     fi
 done
