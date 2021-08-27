@@ -21,9 +21,11 @@ for version in ${versions}; do
             echo "======================= Skipping ${DOCKER_REPO}:$tag"
         elif [ "$tag" = "1.87" ]; then
             echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail"
-        else
+        elif docker image inspect "${DOCKER_REPO}:$tag" >/dev/null 2>&1; then
             echo "======================= Pushing ${DOCKER_REPO}:$tag"
             docker push "${DOCKER_REPO}:$tag"
+        else
+            echo "!!!!!!!!!!!!!! ${DOCKER_REPO}:$tag was not built, cannot push!"
         fi
     fi
 done

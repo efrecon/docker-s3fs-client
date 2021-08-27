@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+# Set good defaults to allow script to be run by hand. The two variables below
+# will never be used when run from within the Docker hub.
+DOCKER_REPO=${DOCKER_REPO:-"efrecon/s3fs"}
+SOURCE_COMMIT=${SOURCE_COMMIT:-$(git log --no-decorate|grep '^commit'|head -n 1| awk '{print $2}')}
+
 # shellcheck disable=SC1091
 . "$(dirname "$0")/reg-tags/image_tags.sh"
 
@@ -22,8 +27,25 @@ for version in ${versions}; do
         elif [ "$tag" = "1.87" ]; then
             echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail"
         else
-            echo "======================= Building ${DOCKER_REPO}:$tag"
-            docker build --build-arg S3FS_VERSION="$version" -t "${DOCKER_REPO}:$tag" .
+            # Get the revision out of the org.opencontainers.image.revision label, this
+            # will be the label where we store information about this repo (it cannot be
+            # the tag, since we tag as the base image).
+            revision=$(img_labels --verbose --token "$token" -- "$DOCKER_REPO" "$tag" |
+                        grep "^org.opencontainers.image.revision" |
+                        sed -E 's/^org.opencontainers.image.revision=(.+)/\1/')
+            # If the revision is different from the source commit (including empty,
+            # which will happen when our version of the image does not already exist),
+            # build the image, making sure we label with the git commit sha at the
+            # org.opencontainers.image.revision OCI label, but using the same tag as the
+            # library image.
+            if [ "$revision" != "$SOURCE_COMMIT" ]; then
+                echo "======================= Building ${DOCKER_REPO}:$tag"
+                docker build \
+                    --build-arg S3FS_VERSION="$version" \
+                    --tag "${DOCKER_REPO}:$tag" \
+                    --label "org.opencontainers.image.revision=$SOURCE_COMMIT" \
+                    .
+            fi
         fi
     fi
 done
