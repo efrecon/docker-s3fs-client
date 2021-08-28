@@ -25,7 +25,7 @@ for version in ${versions}; do
     official=$(echo "$version" | grep -E "^v[0-9]+(.[0-9]+)*")
     if [ -n "$official" ]; then
         tag=$(echo "$official" | sed "s/^v//g")
-        if [ "$tag" = "1.87" ] || [ "$(img_version "$tag")" -lt "$MINVER" ]; then
+        if [ "$tag" = "1.87" ] || [ "$(img_version "$tag")" -lt "$(img_version "$MINVER")" ]; then
             echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail/too old"
         else
             # Get the revision out of the org.opencontainers.image.revision label, this
