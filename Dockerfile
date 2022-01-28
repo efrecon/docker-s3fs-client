@@ -15,7 +15,6 @@ RUN apk --no-cache add \
     mailcap \
     fuse-dev \
     curl-dev && \
-  deluser xfs && \
   git clone https://github.com/s3fs-fuse/s3fs-fuse.git && \
   cd s3fs-fuse && \
   git checkout tags/${S3FS_VERSION} && \
@@ -70,6 +69,7 @@ RUN mkdir /opt/s3fs && \
       libgcc \
       libstdc++ \
       tini && \
+    deluser xfs && \
     s3fs --version
 
 # allow access to volume by different user to enable UIDs other than root when using volumes
