@@ -49,6 +49,7 @@ fi
 # Add a user
 if [ $UID -gt 0 ]; then
     adduser -u $UID -D -G $GROUP_NAME $UID
+
     RUN_AS=$UID
     chown $UID:$GID "${DEST}"
     chown $UID:$GID ${AWS_S3_AUTHFILE}
@@ -70,12 +71,12 @@ fi
 # sub-directory, so we can use the presence of some file/dir as a marker to
 # detect that mounting was a success. Execute the command on success.
 
-su - $RUN_AS -c "s3fs $DEBUG_OPTS ${S3FS_ARGS} \
+s3fs $DEBUG_OPTS ${S3FS_ARGS} \
     -o passwd_file=${AWS_S3_AUTHFILE} \
     -o url=${AWS_S3_URL} \
     -o uid=$UID \
     -o gid=$GID \
-    ${AWS_S3_BUCKET} ${DEST}"
+    ${AWS_S3_BUCKET} "${DEST}"
 
 # s3fs can claim to have a mount even though it didn't succeed.
 # Doing an operation actually forces it to detect that and remove the mount.
