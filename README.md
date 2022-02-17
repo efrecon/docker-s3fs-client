@@ -74,7 +74,7 @@ parametrise the container:
   `AWS_S3_AUTHFILE` is empty.
 * `AWS_S3_URL` is the URL to the Amazon service. This can be used to mount
   external services that implement a compatible API.
-* `AWS_S3_MOUNT` is the location within the container where to mounte the
+* `AWS_S3_MOUNT` is the location within the container where to mount the
   WebDAV resource. This defaults to `/opt/s3fs/bucket` and is not really meant to
   be changed.
 * `UID` is the user ID for the owner of the share inside the container.
