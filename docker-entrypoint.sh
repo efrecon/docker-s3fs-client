@@ -34,8 +34,8 @@ if [ -n "${AWS_S3_SECRET_ACCESS_KEY}" ]; then
 fi
 
 # Create destination directory if it does not exist.
-if [ ! -d $DEST ]; then
-    mkdir -p $DEST
+if [ ! -d "${DEST}" ]; then
+    mkdir -p "${DEST}"
 fi
 
 GROUP_NAME=$(getent group "${GID}" | cut -d":" -f1)
@@ -49,7 +49,9 @@ fi
 # Add a user
 if [ $UID -gt 0 ]; then
     adduser -u $UID -D -G $GROUP_NAME $UID
-    chown $UID:$GID $AWS_S3_MOUNT
+
+    RUN_AS=$UID
+    chown $UID:$GID "${DEST}"
     chown $UID:$GID ${AWS_S3_AUTHFILE}
     chown $UID:$GID /opt/s3fs
 fi
@@ -74,15 +76,15 @@ s3fs $DEBUG_OPTS ${S3FS_ARGS} \
     -o url=${AWS_S3_URL} \
     -o uid=$UID \
     -o gid=$GID \
-    ${AWS_S3_BUCKET} ${AWS_S3_MOUNT}
+    ${AWS_S3_BUCKET} "${DEST}"
 
 # s3fs can claim to have a mount even though it didn't succeed.
 # Doing an operation actually forces it to detect that and remove the mount.
-ls "${AWS_S3_MOUNT}"
+su - $RUN_AS -c "ls ${DEST}"
 
-mounted=$(mount | grep fuse.s3fs | grep "${AWS_S3_MOUNT}")
+mounted=$(mount | grep fuse.s3fs | grep "${DEST}")
 if [ -n "${mounted}" ]; then
-    echo "Mounted bucket ${AWS_S3_BUCKET} onto ${AWS_S3_MOUNT}"
+    echo "Mounted bucket ${AWS_S3_BUCKET} onto ${DEST}"
     exec "$@"
 else
     echo "Mount failure"
