@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # Set good defaults to allow script to be run by hand. The two variables below
 # will never be used when run from within the Docker hub.
@@ -11,17 +11,20 @@ SOURCE_COMMIT=${SOURCE_COMMIT:-$(git log --no-decorate|grep '^commit'|head -n 1|
 # github repo to get list of tags from
 BASEREPO=s3fs-fuse/s3fs-fuse
 MINVER=${MINVER:-1.78}
+VERSIONS=${VERSIONS:-} # When empty, will be all version starting from $MINVER
 
-versions=$( curl -qsL https://api.github.com/repos/${BASEREPO}/tags |
-            grep "\"name\":" |
-            sed "s/,$//g" |
-            sed "s/^\s*\"name\":\s*//g" |
-            sed "s/\"//g")
+if [ -z "$VERSIONS" ]; then
+    VERSIONS=$( curl -qsL https://api.github.com/repos/${BASEREPO}/tags |
+                grep "\"name\":" |
+                sed "s/,$//g" |
+                sed "s/^\s*\"name\":\s*//g" |
+                sed "s/\"//g")
+fi
 
 # Login at the Docker hub to be able to access info about the image.
 token=$(img_auth "$DOCKER_REPO")
 
-for version in ${versions}; do
+for version in $VERSIONS; do
     official=$(echo "$version" | grep -E "^v[0-9]+(.[0-9]+)*")
     if [ -n "$official" ]; then
         tag=$(echo "$official" | sed "s/^v//g")
