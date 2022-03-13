@@ -74,15 +74,15 @@ parametrise the container:
   `AWS_S3_AUTHFILE` is empty.
 * `AWS_S3_URL` is the URL to the Amazon service. This can be used to mount
   external services that implement a compatible API.
-* `AWS_S3_MOUNT` is the location within the container where to mounte the
-  WebDAV resource. This defaults to `/opt/s3fs/bucket` and is not really meant to
-  be changed.
+* `AWS_S3_MOUNT` is the location within the container where to mounte the S3
+  resource. This defaults to `/opt/s3fs/bucket` and is not really meant to be
+  changed.
 * `UID` is the user ID for the owner of the share inside the container.
 * `GID` is the group ID for the owner of the share inside the container.
 * `S3FS_DEBUG` can be set to `1` to get some debugging information from [s3fs].
 * `S3FS_ARGS` can contain some additional options to be blindly passed to
-  [s3fs].
-  * options are supposed to be given comma-separated, e.g. "use_path_request_style,allow_other,default_acl=public-read"
+  [s3fs]. options are supposed to be given comma-separated, e.g.
+  `use_path_request_style,allow_other,default_acl=public-read`
 
   [secrets]: https://docs.docker.com/engine/swarm/secrets/
 
@@ -108,8 +108,9 @@ image to make it possible to run in [Swarm] environments.
 The docker [image] has [tags] that automatically match the list of official
 [versions] of [s3fs]. This is achieved through using the github API to discover
 the list of tags starting with `v` and building a separate image for each of
-them. The image itself builds upon [alpine]. There is no release for version
-1.87 as it contains a regression that was [fixed] after the release.
+them. The image itself builds upon [alpine] and it will pick the latest Alpine
+with major version number `3` at the time of the build. There is no release for
+version 1.87 as it contains a regression that was [fixed] after the release.
 
   [image]: https://cloud.docker.com/repository/docker/efrecon/s3fs
   [tags]: https://cloud.docker.com/repository/docker/efrecon/s3fs/tags
