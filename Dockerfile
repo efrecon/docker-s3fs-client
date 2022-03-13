@@ -1,4 +1,4 @@
-FROM alpine AS build
+FROM alpine:3 AS build
 
 ARG S3FS_VERSION=v1.90
 
@@ -23,10 +23,10 @@ RUN apk --no-cache add \
   make -j && \
   make install
 
-FROM alpine
+FROM alpine:3
 
 # Metadata
-LABEL MAINTAINER efrecon+github@gmail.com
+LABEL MAINTAINER=efrecon+github@gmail.com
 LABEL org.opencontainers.image.title="efrecon/s3fs"
 LABEL org.opencontainers.image.description="Mount S3 buckets from within a container and expose them to host/containers"
 LABEL org.opencontainers.image.authors="Emmanuel Frécon <efrecon+github@gmail.com>"
@@ -80,6 +80,13 @@ WORKDIR /opt/s3fs
 
 # Following should match the AWS_S3_MOUNT environment variable.
 VOLUME [ "/opt/s3fs/bucket" ]
+
+HEALTHCHECK \
+  --interval=15s \
+  --timeout=5s \
+  --start-period=15s \
+  --retries=2 \
+  CMD [ "/usr/local/bin/healthcheck.sh" ]
 
 # The default is to perform all system-level mounting as part of the entrypoint
 # to then have a command that will keep listing the files under the main share.
