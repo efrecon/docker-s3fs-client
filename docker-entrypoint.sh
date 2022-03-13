@@ -54,7 +54,7 @@ fi
 if [ "$UID" -gt 0 ]; then
     adduser -u "$UID" -D -G "$GROUP_NAME" "$UID"
     RUN_AS=$UID
-    chown "$UID:$GID" "$AWS_S3_MOUNT" "${AWS_S3_AUTHFILE}" /opt/s3fs
+    chown "$UID:$GID" "$DEST" "${AWS_S3_AUTHFILE}" /opt/s3fs
 fi
 
 # Debug options
@@ -72,16 +72,16 @@ fi
 # sub-directory, so we can use the presence of some file/dir as a marker to
 # detect that mounting was a success. Execute the command on success.
 
-su - $RUN_AS -c "s3fs $DEBUG_OPTS ${S3FS_ARGS} \
+s3fs $DEBUG_OPTS ${S3FS_ARGS} \
     -o passwd_file=${AWS_S3_AUTHFILE} \
     -o url=${AWS_S3_URL} \
     -o uid=$UID \
     -o gid=$GID \
-    ${AWS_S3_BUCKET} ${AWS_S3_MOUNT}"
+    "${AWS_S3_BUCKET}" "${DEST}"
 
 # s3fs can claim to have a mount even though it didn't succeed.
 # Doing an operation actually forces it to detect that and remove the mount.
-ls "${AWS_S3_MOUNT}"
+su - $RUN_AS -c "ls ${DEST}"
 
 if healthcheck.sh; then
     echo "Mounted bucket ${AWS_S3_BUCKET} onto ${DEST}"
