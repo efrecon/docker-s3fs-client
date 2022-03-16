@@ -1,6 +1,6 @@
 FROM alpine:3 AS build
 
-ARG S3FS_VERSION=v1.90
+ARG S3FS_VERSION=v1.91
 
 RUN apk --no-cache add \
     ca-certificates \
