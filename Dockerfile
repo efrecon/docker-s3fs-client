@@ -1,4 +1,4 @@
-FROM alpine:3 AS build
+FROM alpine:3.15.2 AS build
 
 ARG S3FS_VERSION=v1.91
 
@@ -23,7 +23,7 @@ RUN apk --no-cache add \
   make -j && \
   make install
 
-FROM alpine:3
+FROM alpine:3.15.2
 
 # Metadata
 LABEL MAINTAINER=efrecon+github@gmail.com
