@@ -1,4 +1,5 @@
-FROM alpine:3.15.3 AS build
+ARG ALPINE_VERSION=3.15.3
+FROM alpine:$ALPINE_VERSION AS build
 
 ARG S3FS_VERSION=v1.91
 
@@ -23,7 +24,7 @@ RUN apk --no-cache add \
   make -j && \
   make install
 
-FROM alpine:3.15.3
+FROM alpine:$ALPINE_VERSION
 
 # Metadata
 LABEL MAINTAINER=efrecon+github@gmail.com
@@ -47,7 +48,7 @@ ENV AWS_S3_SECRET_ACCESS_KEY_FILE=
 ENV AWS_S3_AUTHFILE=
 ENV AWS_S3_BUCKET=
 
-# User and group ID of share owner
+# User and group ID of S3 mount owner
 ENV RUN_AS=
 ENV UID=0
 ENV GID=0
@@ -72,7 +73,8 @@ RUN mkdir /opt/s3fs && \
     deluser xfs && \
     s3fs --version
 
-# allow access to volume by different user to enable UIDs other than root when using volumes
+# allow access to volume by different user to enable UIDs other than root when
+# using volumes
 RUN echo user_allow_other >> /etc/fuse.conf
 
 COPY *.sh /usr/local/bin/
