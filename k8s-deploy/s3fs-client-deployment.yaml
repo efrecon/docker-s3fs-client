@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3fs-client-deployment
+  labels:
+    app: s3fs
+    role: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3fs
+      role: client
+  template:
+    metadata:
+      labels:
+        app: s3fs
+        role: client
+    spec:
+      imagePullSecrets:
+      - name: dl-renjianxin-secret
+      containers:
+      - name: s3fs-client
+        image: hub.fuxi.netease.com/renjianxin/s3fs-client:v0.0.1
+        resources:
+          requests:
+            cpu: 1
+            memory: 2Gi
+            #volumeMounts:
+            #- name: s3fs-fuse-dev
+            #mountPath: /dev/fuse
+        securityContext:
+          privileged" false
+          capabilities:
+            add:
+            - SYS_ADMIN
+              #volumes:
+              #- name: s3fs-fuse-dev
+              #hostPath:
+              #path: /dev/fuse

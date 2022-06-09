@@ -1,31 +1,34 @@
-FROM alpine:3 AS build
+FROM debian:9 AS build
 
 ARG S3FS_VERSION=v1.91
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apk --no-cache add \
+ENV DEBCONF_NOWARNINGS="yes"
+
+RUN apt update && \
+    apt-get install -y --no-install-recommends apt-utils \
     ca-certificates \
-    build-base \
+    build-essential \
     git \
-    alpine-sdk \
-    libcurl \
-    automake \
-    make \
-    autoconf \
+    libfuse-dev \
+    libcurl4-openssl-dev \
     libxml2-dev \
-    libressl-dev \
-    mailcap \
-    fuse-dev \
-    curl-dev
+    mime-support \
+    automake \
+    libtool && \
+    apt install -y --no-install-recommends pkg-config \
+    libssl1.0-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/s3fs-fuse/s3fs-fuse.git && \
-  cd s3fs-fuse && \
-  git checkout tags/${S3FS_VERSION} && \
-  ./autogen.sh && \
-  ./configure --prefix=/usr && \
-  make -j && \
-  make install
+RUN git clone https://github.com/s3fs-fuse/s3fs-fuse && \
+    cd s3fs-fuse && \
+    autoupdate && ./autogen.sh && \
+    ./configure --prefix=/usr --with-openssl && \
+    make && make install
 
-FROM alpine:3
+
+
+FROM debian:9
 
 # Metadata
 LABEL MAINTAINER=xiaoyao,ren+github@gmail.com
@@ -54,6 +57,8 @@ ENV RUN_AS=
 ENV UID=0
 ENV GID=0
 
+ENV DEBCONF_NOWARNINGS="yes"
+
 # Location of directory where to mount the drive into the container.
 ENV AWS_S3_MOUNT=/opt/s3fs/bucket
 
@@ -61,18 +66,20 @@ ENV AWS_S3_MOUNT=/opt/s3fs/bucket
 ENV S3FS_DEBUG=0
 ENV S3FS_ARGS=
 
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
+
 RUN mkdir /opt/s3fs && \
-    apk --no-cache add \
-      ca-certificates \
-      mailcap \
-      fuse \
-      libxml2 \
-      libcurl \
-      libgcc \
-      libstdc++ \
-      tini && \
-    deluser xfs && \
-    s3fs --version
+   chmod +x /usr/local/bin/tini && \
+   apt-get update && \
+   apt-get install -y --no-install-recommends apt-utils \
+   ca-certificates \
+   libcurl3 \
+   libxml2 \
+   fuse \
+   procps && \
+   apt-get clean && rm -rf /var/lib/apt/lists/*
+   
 
 # allow access to volume by different user to enable UIDs other than root when using volumes
 RUN echo user_allow_other >> /etc/fuse.conf
@@ -95,5 +102,5 @@ HEALTHCHECK \
 # to then have a command that will keep listing the files under the main share.
 # Listing the files will keep the share active and avoid that the remote server
 # closes the connection.
-ENTRYPOINT [ "tini", "-g", "--", "docker-entrypoint.sh" ]
+ENTRYPOINT [ "/usr/local/bin/tini", "-g", "--", "docker-entrypoint.sh" ]
 CMD [ "empty.sh" ]
