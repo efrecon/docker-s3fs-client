@@ -77,6 +77,11 @@ parametrise the container:
 * `AWS_S3_MOUNT` is the location within the container where to mount the
   WebDAV resource. This defaults to `/opt/s3fs/bucket` and is not really meant to
   be changed.
+* `AWS_S3_ENVFILE` is the location of a `.env` file, within the container, from
+  where to read the content of environment variables. Only lines starting with
+  `AWS_S3_` or `S3FS_` will be recognised. Content will be expanded by shell.
+  Usually, you will want to bind mount that file from the host in read-only
+  mode.
 * `UID` is the user ID for the owner of the share inside the container.
 * `GID` is the group ID for the owner of the share inside the container.
 * `S3FS_DEBUG` can be set to `1` to get some debugging information from [s3fs].
@@ -98,10 +103,11 @@ system will be unstable as it will contain an unknown entry.
 
 Automatic unmounting is achieved through a combination of a `trap` in the
 command being executed and [tini]. [tini] is made available directly in this
-image to make it possible to run in [Swarm] environments.
+image to make it possible to run in [Swarm][swarm] or [kubernetes] environments.
 
   [tini]: https://github.com/krallin/tini
-  [Swarm]: https://docs.docker.com/engine/swarm/
+  [swarm]: https://docs.docker.com/engine/swarm/
+  [kubernetes]: https://kubernetes.io/
 
 ## Versions and Tags
 
