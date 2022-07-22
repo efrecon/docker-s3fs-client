@@ -1,0 +1,13 @@
+name: keepalive
+
+on:
+  schedule:
+    # Run every sunday at 1:27 UTC
+    - cron: '27 1 * * SUN'
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: keepalive
+        uses: efrecon/gh-action-keepalive@main
