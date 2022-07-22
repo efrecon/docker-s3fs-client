@@ -14,9 +14,10 @@ container termination.
   [s3fs]: https://github.com/s3fs-fuse/s3fs-fuse
   [volume]: https://docs.docker.com/storage/
 
-The image [tags] follow the versions from the [s3fs] implementation. New
-versions of [s3fs] will automatically be picked up when [rebuilding]. [s3fs] is
-compiled from the tagged git versions from the main repository. The image is
+The image [tags] follow the versions from the [s3fs] implementation, there will
+be **no** `latest`, only tags matching released versions of [s3fs]. New versions
+of [s3fs] will automatically be picked up when [rebuilding]. [s3fs] is compiled
+from the tagged git versions from the main repository. The image is
 automatically built using a github [workflow] and pushed to both the Docker
 [Hub][image] and to the [GHCR]. Detection of new releases happens once every
 day.
