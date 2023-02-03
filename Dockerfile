@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.15.6
+ARG ALPINE_VERSION=3.17.1
 FROM alpine:$ALPINE_VERSION AS build
 
 ARG S3FS_VERSION=v1.91
@@ -12,7 +12,6 @@ RUN apk --no-cache add \
     automake \
     autoconf \
     libxml2-dev \
-    libressl-dev \
     mailcap \
     fuse-dev \
     curl-dev && \
