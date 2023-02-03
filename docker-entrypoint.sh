@@ -51,10 +51,10 @@ AWS_S3_SECRET_ACCESS_KEY_FILE=${AWS_S3_SECRET_ACCESS_KEY_FILE:-""}
 AWS_S3_AUTHFILE=${AWS_S3_AUTHFILE:-""}
 
 # Check variables and defaults
-if [ -z "${AWS_S3_ACCESS_KEY_ID}" ] && \
-    [ -z "${AWS_S3_SECRET_ACCESS_KEY}" ] && \
-    [ -z "${AWS_S3_SECRET_ACCESS_KEY_FILE}" ] && \
-    [ -z "${AWS_S3_AUTHFILE}" ]; then
+if [ -z "$AWS_S3_ACCESS_KEY_ID" ] && \
+    [ -z "$AWS_S3_SECRET_ACCESS_KEY" ] && \
+    [ -z "$AWS_S3_SECRET_ACCESS_KEY_FILE" ] && \
+    [ -z "$AWS_S3_AUTHFILE" ]; then
     _error "You need to provide some credentials!!"
 fi
 if [ -z "${AWS_S3_BUCKET}" ]; then
@@ -85,8 +85,8 @@ if [ ! -d "$AWS_S3_MOUNT" ]; then
 fi
 
 # Add a group, default to naming it after the GID when not found
-GROUP_NAME=$(getent group "${GID}" | cut -d":" -f1)
-if [ "$GID" -gt 0 ] && [ -z "${GROUP_NAME}" ]; then
+GROUP_NAME=$(getent group "$GID" | cut -d":" -f1)
+if [ "$GID" -gt 0 ] && [ -z "$GROUP_NAME" ]; then
     _verbose "Add group $GID"
     addgroup -g "$GID" -S "$GID"
     GROUP_NAME=$GID
@@ -95,10 +95,15 @@ fi
 # Add a user, default to naming it after the UID.
 RUN_AS=${RUN_AS:-""}
 if [ "$UID" -gt 0 ]; then
-    _verbose "Add user $UID, turning on rootless-mode"
-    adduser -u "$UID" -D -G "$GROUP_NAME" "$UID"
+    USER_NAME=$(getent passwd "$UID" | cut -d":" -f1)
+    if [ -z "$USER_NAME" ]; then
+        _verbose "Add user $UID, turning on rootless-mode"
+        adduser -u "$UID" -D -G "$GROUP_NAME" "$UID"
+    else
+        _verbose "Running as user $UID, turning on rootless-mode"
+    fi
     RUN_AS=$UID
-    chown "$UID:$GID" "$AWS_S3_MOUNT" "${AWS_S3_AUTHFILE}" "$AWS_S3_ROOTDIR"
+    chown "${UID}:${GID}" "$AWS_S3_MOUNT" "${AWS_S3_AUTHFILE}" "$AWS_S3_ROOTDIR"
 fi
 
 # Debug options
@@ -116,7 +121,7 @@ fi
 _verbose "Mounting bucket ${AWS_S3_BUCKET} onto ${AWS_S3_MOUNT}, owner: $UID:$GID"
 su - $RUN_AS -c "s3fs $DEBUG_OPTS ${S3FS_ARGS} \
     -o passwd_file=${AWS_S3_AUTHFILE} \
-    -o url=${AWS_S3_URL} \
+    -o "url=${AWS_S3_URL}" \
     -o uid=$UID \
     -o gid=$GID \
     ${AWS_S3_BUCKET} ${AWS_S3_MOUNT}"
