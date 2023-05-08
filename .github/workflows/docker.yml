@@ -36,16 +36,10 @@ jobs:
       -
         name: Build GHCR images
         env:
-          DOCKER_REPO: ghcr.io/efrecon/s3fs
+          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/s3fs
           SOURCE_COMMIT: ${{ github.sha }}
           MINVER: 1.91
         run: ./hooks/build
-      -
-        name: Push GHCR images
-        env:
-          DOCKER_REPO: ghcr.io/efrecon/s3fs
-          SOURCE_COMMIT: ${{ github.sha }}
-        run: ./hooks/push
   hub:
     runs-on: ubuntu-latest
     steps:
@@ -75,12 +69,6 @@ jobs:
           DOCKER_REPO: docker.io/efrecon/s3fs
           SOURCE_COMMIT: ${{ github.sha }}
         run: ./hooks/build
-      -
-        name: Push Docker Hub images
-        env:
-          DOCKER_REPO: docker.io/efrecon/s3fs
-          SOURCE_COMMIT: ${{ github.sha }}
-        run: ./hooks/push
       -
         # Note: This uses the password, not the token as this action would
         # otherwise not work.
