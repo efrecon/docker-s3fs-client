@@ -24,7 +24,7 @@ for version in $VERSIONS; do
             echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail/too old"
         elif docker image inspect "${DOCKER_REPO}:$tag" >/dev/null 2>&1; then
             echo "======================= Pushing ${DOCKER_REPO}:$tag"
-            docker push "${DOCKER_REPO}:$tag"
+            docker buildx build --push -t "${DOCKER_REPO}:$tag"
         else
             echo "!!!!!!!!!!!!!! ${DOCKER_REPO}:$tag was not built, cannot push!"
         fi
