@@ -38,7 +38,7 @@ jobs:
         env:
           DOCKER_REPO: ghcr.io/efrecon/s3fs
           SOURCE_COMMIT: ${{ github.sha }}
-          MINVER: 1.91
+          MINVER: 1.90
         run: ./hooks/build
       -
         name: Push GHCR images

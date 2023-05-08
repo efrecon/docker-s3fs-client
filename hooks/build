@@ -45,7 +45,7 @@ for version in $VERSIONS; do
             if [ "$revision" != "$SOURCE_COMMIT" ]; then
                 echo "======================= Building ${DOCKER_REPO}:$tag"
                 # docker buildx build --platform linux/arm64,linux/amd64,linux/arm/v7 \
-                docker buildx build --push \
+                docker buildx build \
                     --build-arg S3FS_VERSION="$version" \
                     --tag "${DOCKER_REPO}:$tag" \
                     --label "org.opencontainers.image.revision=$SOURCE_COMMIT" \

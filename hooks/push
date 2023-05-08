@@ -22,11 +22,9 @@ for version in $VERSIONS; do
         tag=$(echo "$official" | sed "s/^v//g")
         if [ "$tag" = "1.87" ] || [ "$(img_version "$tag")" -lt "$(img_version "$MINVER")" ]; then
             echo "======================= Skipping ${DOCKER_REPO}:$tag, known to fail/too old"
-        elif docker image inspect "${DOCKER_REPO}:$tag" >/dev/null 2>&1; then
+        else
             echo "======================= Pushing ${DOCKER_REPO}:$tag"
             docker buildx build --push -t "${DOCKER_REPO}:$tag"
-        else
-            echo "!!!!!!!!!!!!!! ${DOCKER_REPO}:$tag was not built, cannot push!"
         fi
     fi
 done
