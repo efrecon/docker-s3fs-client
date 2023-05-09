@@ -36,7 +36,7 @@ jobs:
       -
         name: Build GHCR images
         env:
-          DOCKER_REPO: ghcr.io/efrecon/s3fs
+          DOCKER_REPO: ghcr.io/${{ github.actor }}/s3fs
           SOURCE_COMMIT: ${{ github.sha }}
         run: ./hooks/build
   hub:
