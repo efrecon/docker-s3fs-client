@@ -38,7 +38,6 @@ jobs:
         env:
           DOCKER_REPO: ghcr.io/efrecon/s3fs
           SOURCE_COMMIT: ${{ github.sha }}
-          MINVER: 1.91
         run: ./hooks/build
   hub:
     runs-on: ubuntu-latest
