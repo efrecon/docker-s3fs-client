@@ -53,6 +53,10 @@ make sure that the container will be able to make available the S3 bucket
 using FUSE. `rshared` is what ensures that bind mounting makes the files and
 directories available back to the host and recursively to other containers.
 
+Note that there are reports of mount propagation not working with the compose
+plugin. See [#42](https://github.com/efrecon/docker-s3fs-client/issues/42).
+Reverting to standalone `docker-compose` seems to work.
+
 ## Container Options
 
 A series of environment variables, most led by `AWS_S3_` can be used to
