@@ -63,7 +63,7 @@ fi
 
 if [ -n "${AWS_S3_SECRET_ACCESS_KEY_FILE}" ]; then
     # shellcheck disable=SC2229   # We WANT to read the content of the file pointed by the variable!
-    AWS_S3_SECRET_ACCESS_KEY=$(read -r "${AWS_S3_SECRET_ACCESS_KEY_FILE}")
+    read -r AWS_S3_SECRET_ACCESS_KEY < "${AWS_S3_SECRET_ACCESS_KEY_FILE}"
 fi
 
 # Create or use authorisation file
