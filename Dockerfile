@@ -42,6 +42,7 @@ COPY --from=build /usr/bin/s3fs /usr/bin/s3fs
 # file, set environment variables with the key and the secret.
 ENV AWS_S3_URL=https://s3.amazonaws.com
 ENV AWS_S3_ACCESS_KEY_ID=
+ENV AWS_S3_ACCESS_KEY_ID_FILE=
 ENV AWS_S3_SECRET_ACCESS_KEY=
 ENV AWS_S3_SECRET_ACCESS_KEY_FILE=
 ENV AWS_S3_AUTHFILE=

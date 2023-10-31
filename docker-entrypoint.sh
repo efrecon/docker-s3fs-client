@@ -46,12 +46,14 @@ AWS_S3_MOUNT=${AWS_S3_MOUNT:-"${AWS_S3_ROOTDIR%/}/bucket"}
 
 # Authorisation details
 AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID:-""}
+AWS_S3_ACCESS_KEY_ID_FILE=${AWS_S3_ACCESS_KEY_ID_FILE:-""}
 AWS_S3_SECRET_ACCESS_KEY=${AWS_S3_SECRET_ACCESS_KEY:-""}
 AWS_S3_SECRET_ACCESS_KEY_FILE=${AWS_S3_SECRET_ACCESS_KEY_FILE:-""}
 AWS_S3_AUTHFILE=${AWS_S3_AUTHFILE:-""}
 
 # Check variables and defaults
 if [ -z "$AWS_S3_ACCESS_KEY_ID" ] && \
+    [ -z "$AWS_S3_ACCESS_KEY_ID_FILE" ] && \
     [ -z "$AWS_S3_SECRET_ACCESS_KEY" ] && \
     [ -z "$AWS_S3_SECRET_ACCESS_KEY_FILE" ] && \
     [ -z "$AWS_S3_AUTHFILE" ]; then
@@ -61,9 +63,16 @@ if [ -z "${AWS_S3_BUCKET}" ]; then
     _error "No bucket name provided!"
 fi
 
+# Read AWS S3 Access Key ID from file
+if [ -n "${AWS_S3_ACCESS_KEY_ID_FILE}" ]; then
+    # shellcheck disable=SC2229   # We WANT to read the content of the file pointed by the variable!
+    read -r AWS_S3_ACCESS_KEY_ID < "${AWS_S3_ACCESS_KEY_ID_FILE}"
+fi
+
+# Read AWS S3 Secret Access Key from file
 if [ -n "${AWS_S3_SECRET_ACCESS_KEY_FILE}" ]; then
     # shellcheck disable=SC2229   # We WANT to read the content of the file pointed by the variable!
-    AWS_S3_SECRET_ACCESS_KEY=$(read -r "${AWS_S3_SECRET_ACCESS_KEY_FILE}")
+    read -r AWS_S3_SECRET_ACCESS_KEY < "${AWS_S3_SECRET_ACCESS_KEY_FILE}"
 fi
 
 # Create or use authorisation file
@@ -73,7 +82,13 @@ if [ -z "${AWS_S3_AUTHFILE}" ]; then
     chmod 600 "${AWS_S3_AUTHFILE}"
 fi
 
-# forget about the password once done (this will have proper effects when the
+# Forget about the secret once done (this will have proper effects when the
+# PASSWORD_FILE-version of the setting is used)
+if [ -n "${AWS_S3_ACCESS_KEY_ID}" ]; then
+    unset AWS_S3_ACCESS_KEY_ID
+fi
+
+# Forget about the secret once done (this will have proper effects when the
 # PASSWORD_FILE-version of the setting is used)
 if [ -n "${AWS_S3_SECRET_ACCESS_KEY}" ]; then
     unset AWS_S3_SECRET_ACCESS_KEY

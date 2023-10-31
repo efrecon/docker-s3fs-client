@@ -67,7 +67,14 @@ parametrise the container:
   format specified by [s3fs]. This can be empty, in which case data will be
   taken from the other authorisation-related environment variables.
 * `AWS_S3_ACCESS_KEY_ID` is the access key to the S3 bucket, this is only used
-  whenever `AWS_S3_AUTHFILE` is empty.
+  whenever `AWS_S3_AUTHFILE` is empty. Note however that the variable
+  `AWS_S3_ACCESS_KEY_ID_FILE` has precedence over this one.
+* `AWS_S3_ACCESS_KEY_ID_FILE` points instead to a file that will contain the
+  access key id to the S3 bucket. When this is present, the password will be
+  taken from the file instead of from the `AWS_S3_ACCESS_KEY_ID` variable.
+  If that variable existed, it will be disregarded. This makes it easy to pass
+  passwords using Docker [secrets]. This is only ever used whenever
+  `AWS_S3_AUTHFILE` is empty.
 * `AWS_S3_SECRET_ACCESS_KEY` is the secret access key to the S3 bucket, this is
   only used whenever `AWS_S3_AUTHFILE` is empty. Note however that the variable
   `AWS_S3_SECRET_ACCESS_KEY_FILE` has precedence over this one.
