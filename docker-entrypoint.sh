@@ -128,7 +128,7 @@ su - $RUN_AS -c "s3fs $DEBUG_OPTS ${S3FS_ARGS} \
 
 # s3fs can claim to have a mount even though it didn't succeed. Doing an
 # operation actually forces it to detect that and remove the mount.
-su - $RUN_AS -c "ls ${AWS_S3_MOUNT}"
+su - $RUN_AS -c "stat ${AWS_S3_MOUNT}"
 
 if healthcheck.sh; then
     echo "Mounted bucket ${AWS_S3_BUCKET} onto ${AWS_S3_MOUNT}"
