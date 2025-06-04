@@ -70,7 +70,7 @@ RUN mkdir /opt/s3fs && \
       libgcc \
       libstdc++ \
       tini && \
-    deluser xfs && \
+    if id -u xfs >/dev/null 2>&1; then deluser xfs; fi && \
     s3fs --version
 
 # allow access to volume by different user to enable UIDs other than root when
